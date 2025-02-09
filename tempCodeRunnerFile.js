@@ -1,0 +1,1 @@
+ 'semi-spacing': ['error', { 'before': false, 'after': true }],  // Space after semicolon

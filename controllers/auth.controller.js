@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken";
 import { JWT_EXPIRES_IN, JWT_SECRET } from "../config/env.js";
 
 export const signUp = async (req, res, next) => {
+    let token;
+    let newUser;
     // Atomic updates
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -17,9 +19,10 @@ export const signUp = async (req, res, next) => {
             // Hash password to store in database
             const salt = await bcrypt.genSalt(10);
             const hashPassword = await bcrypt.hash(password, salt);
-            const newUser = await User.create([{ name, email, password: hashPassword }], { session });
+             newUser = await User.create([{ name, email, password: hashPassword }], { session });
             // console.log(newUser);
-            const token = jwt.sign({ userId: newUser[0]._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+             token = jwt.sign({ userId: newUser[0]._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+            // console.log(token);
         } else {
             const error = new Error("User already exists");
             error.statusCode = 409;
